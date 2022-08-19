@@ -8,6 +8,28 @@
         <hr>
     </div>
 </div>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <!-- <div class="alert alert-success alert-dismissible fade show" role="alert">
+                A simple primary alert with <a href="#" class="alert-link">an example link</a>. Give it a click if you like.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                A simple warning alert with <a href="#" class="alert-link">an example link</a>. Give it a click if you like.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div> -->
+            <?php if (!empty($errors->all())) : ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <?php foreach ($errors->all() as $message) : ?>
+                        {{ $message }} <br>
+                    <?php endforeach; ?>
+                    <button type="button" class="btn-close btn-sm" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif ?>
+        </div>
+    </div>
+</div>
 <div class="container mb-3">
     <div class="row">
         <div class="col">
@@ -40,8 +62,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('product.store') }}" method="post" class="row g-3">
-                    @csrf()
+                <form action="{{ route('product.store') }}" method="post" class="row g-3" enctype="multipart/form-data">
+                    @csrf
                     <div class="col-md-12">
                         <label for="name">Name Product</label>
                         <input type="text" name="name" id="name" class="form-control">

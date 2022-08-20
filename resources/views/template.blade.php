@@ -10,6 +10,8 @@
 <link rel="stylesheet" href="{{ asset('assets/bootstrap/css/bootstrap.css') }}">
 <script src="{{ asset('assets/bootstrap/js/bootstrap.js') }}"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
+
 <body>
     @include('navbar')
 

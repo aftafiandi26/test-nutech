@@ -1,6 +1,9 @@
 @extends('template')
 
 @section('content')
+<!-- <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
+<link rel="stylesheet" href="{{ asset('assets/sweetalert2/sweetalert2.css') }}">
+<script src="{{ asset('assets/sweetalert2/sweetalert2.js') }}"></script>
 
 <div class="container">
     <div class="row">
@@ -11,16 +14,7 @@
 <div class="container">
     <div class="row">
         <div class="col">
-            <?php if (!empty($succes)) : ?>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ $success }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            <?php endif ?>
-            <!--<div class="alert alert-warning alert-dismissible fade show" role="alert">
-                A simple warning alert with <a href="#" class="alert-link">an example link</a>. Give it a click if you like.
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div> -->
+            @include('sweetalert::alert')
             <?php if (!empty($errors->all())) : ?>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <?php foreach ($errors->all() as $message) : ?>
@@ -35,6 +29,14 @@
 <div class="container mb-3">
     <div class="row">
         <div class="col">
+            <form action="#" method="get" enctype="application/x-www-form-urlencoded">
+                @csrf
+                <label for="find">Product Name</label>
+                <input type="text" name="find" id="find" class="form-controll">
+                <button type="submit" class="badge bg-secondary">find</button>
+            </form>
+        </div>
+        <div class="col">
             <a class="btn badge bg-info float-end" data-bs-toggle="modal" data-bs-target="#createModal">create</a>
         </div>
     </div>
@@ -42,7 +44,7 @@
 <div class="container">
     <div class="row">
         <div class="col">
-            <table class="table table-bordered table-condensed table-striped text-center" style="vertical-align: middle;">
+            <table class="table table-bordered table-condensed table-striped text-center" style="vertical-align: middle;" id="tables">
                 <thead>
                     <tr>
                         <th>No</th>
@@ -62,13 +64,12 @@
                                 <img src="{{ $product->getCover() }}" alt="img" class="img img-fluid rounded" height="100px" width="100px">
                             </td>
                             <td>{{ $product->name }}</td>
-                            <td>{{ $product->buy }}</td>
-                            <td>{{ $product->sell }}</td>
+                            <td>{{ "Rp " . number_format($product->buy,2,',','.'); }}</td>
+                            <td>{{ "Rp " . number_format($product->sell,2,',','.'); }}</td>
                             <td>{{ $product->stock }}</td>
                             <td>
-                                <a href="#" class="badge bg-success btn">view</a>
-                                <a href="#" class="badge bg-warning btn">edit</a>
-                                <a href="#" class="badge bg-danger btn">hapus</a>
+                                <a data-bs-role="{{ route('product.show', $product->id) }}" class="badge bg-warning btn" data-bs-target="#editModal" data-bs-toggle="modal" id="edit">edit</a>
+                                <a data-bs-role="{{ route('product.destroy', $product->id) }}" class="badge bg-danger btn" id="hapus">hapus</a>
                             </td>
                         </tr>
                     <?php endforeach ?>
@@ -123,6 +124,22 @@
     </div>
 </div>
 
+<!-- modal edit -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" id="modal-content-edit">
+
+        </div>
+    </div>
+</div>
+
+<!-- form delete -->
+<form action="" method="post" id="deleteForm">
+    @csrf
+    @method("DELETE")
+    <input type="submit" value="Hapus" style="display: none">
+</form>
+
 <script>
     function previewImage() {
         const image = document.querySelector('#image');
@@ -135,5 +152,57 @@
             imgPreview.src = oFREvent.target.result;
         }
     }
+
+    $('a#edit').on('click', function(s) {
+        const id = $(this).attr('data-bs-role');
+
+        $.ajax({
+            url: id,
+            success: function(a) {
+                $("#modal-content-edit").html(a);
+            }
+        });
+    });
+
+    $('a#hapus').on('click', function(s) {
+        const id = $(this).attr('data-bs-role');
+
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-sm btn-success',
+                cancelButton: 'btn btn-sm btn-danger'
+            },
+            buttonsStyling: false
+        });
+
+        Swal.fire({
+            title: 'Apakah kamu yakin?',
+            text: "Anda tidak akan dapat mengembalikannya!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Hapus ini!',
+            cancelButtonText: 'Tidak, Batalkan!',
+        }).then((result) => {
+            if (result.value) {
+                document.getElementById('deleteForm').action = id;
+                document.getElementById('deleteForm').submit();
+
+                swalWithBootstrapButtons.fire(
+                    'Terhapus!',
+                    'Data berhasil dihapus dari sistem.',
+                    'success'
+                )
+            } else if (
+                result.dismiss === Swal.DismissReason.cancel
+            ) {
+                swalWithBootstrapButtons.fire(
+                    'Dibatalkan',
+                    'Data berhasil diamakan :)',
+                    'error'
+                )
+            }
+        });
+
+    })
 </script>
 @endSection

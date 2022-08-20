@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DataSearchController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 

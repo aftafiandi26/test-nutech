@@ -11,11 +11,13 @@
 <div class="container">
     <div class="row">
         <div class="col">
-            <!-- <div class="alert alert-success alert-dismissible fade show" role="alert">
-                A simple primary alert with <a href="#" class="alert-link">an example link</a>. Give it a click if you like.
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <?php if (!empty($succes)) : ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ $success }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif ?>
+            <!--<div class="alert alert-warning alert-dismissible fade show" role="alert">
                 A simple warning alert with <a href="#" class="alert-link">an example link</a>. Give it a click if you like.
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div> -->
@@ -33,23 +35,47 @@
 <div class="container mb-3">
     <div class="row">
         <div class="col">
-            <a class="btn btn-outline-info btn-sm float-end" data-bs-toggle="modal" data-bs-target="#createModal">create</a>
+            <a class="btn badge bg-info float-end" data-bs-toggle="modal" data-bs-target="#createModal">create</a>
         </div>
     </div>
 </div>
 <div class="container">
     <div class="row">
-        <table class="table table-bordered table-condensed">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Cover</th>
-                    <th>Purchase Price</th>
-                    <th>Selling Price</th>
-                    <th>Stock</th>
-                </tr>
-            </thead>
-        </table>
+        <div class="col">
+            <table class="table table-bordered table-condensed table-striped text-center" style="vertical-align: middle;">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Cover</th>
+                        <th>Product</th>
+                        <th>Purchase Price</th>
+                        <th>Selling Price</th>
+                        <th>Stock</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($products as $key => $product) : ?>
+                        <tr>
+                            <td>{{ $products->firstItem() + $key }}</td>
+                            <td>
+                                <img src="{{ $product->getCover() }}" alt="img" class="img img-fluid rounded" height="100px" width="100px">
+                            </td>
+                            <td>{{ $product->name }}</td>
+                            <td>{{ $product->buy }}</td>
+                            <td>{{ $product->sell }}</td>
+                            <td>{{ $product->stock }}</td>
+                            <td>
+                                <a href="#" class="badge bg-success btn">view</a>
+                                <a href="#" class="badge bg-warning btn">edit</a>
+                                <a href="#" class="badge bg-danger btn">hapus</a>
+                            </td>
+                        </tr>
+                    <?php endforeach ?>
+                </tbody>
+            </table>
+            {{ $products->render() }}
+        </div>
     </div>
 </div>
 
@@ -82,7 +108,7 @@
                     </div>
                     <div class="col-md-12">
                         <label for="image" class="form-label">Image Product</label>
-                        <input type="file" class="form-control" id="image" onclick="previewImage()">
+                        <input type="file" class="form-control" name="image" id="image" onclick="previewImage()">
                         <div class="col-md-12 text-center flex my-2">
                             <img class="img-preview img-fluid " width="250px" height="250px" alt="unknow">
                         </div>

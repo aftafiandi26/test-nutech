@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Product\StorePostRequest;
 use App\Models\Products;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
@@ -16,7 +17,9 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return view('products.index');
+        $products = Products::orderBy('name', 'asc')->paginate(10);
+
+        return view('products.index', compact('products'));
     }
 
     /**
@@ -41,7 +44,7 @@ class ProductController extends Controller
             'name'      => 'required|unique:product',
             'purchase'  => 'required|numeric|min:0',
             'selling'   => 'required|numeric|min:0',
-            'picture'   => 'required|image|mimes:jpg,png|max:100',
+            'image'   => 'required|image|mimes:jpg,png|max:100',
             'stock'     => 'required|numeric|min:0'
         ];
 
@@ -54,13 +57,23 @@ class ProductController extends Controller
             'selling.required' => 'Selling Price is required',
             'selling.numeric' => 'Selling Price must be a number',
             'selling.min' => 'Selling Price cannot be smaller than Zero',
-            'picture.required' => 'Picture is required',
-            'picture.image' => 'Picture must be a format JPG or PNG',
-            'picture.max' => 'Picture size cannot be bigger than 100kb',
+            'image.required' => 'Picture is required',
+            'image.image' => 'Picture must be a format JPG or PNG',
+            'image.max' => 'Picture size cannot be bigger than 100kb',
             'stock.required' => 'Stock is required',
             'stock.numeric' => 'Stock must be a number',
             'stock.min' => 'Stock cannot be smaller than Zero',
 
+        ];
+
+        $path = Storage::putFileAs('public/products', $request->image, $request->name . ".jpg");
+
+        $data = [
+            'image' => $path,
+            'name'  => $request->name,
+            'buy'   => $request->purchase,
+            'sell'  => $request->selling,
+            'stock' => $request->stock
         ];
 
         $validator = Validator::make($request->all(), $rule, $messages);
@@ -70,15 +83,10 @@ class ProductController extends Controller
                 ->withErrors($validator)
                 ->withInput();
         } else {
-            $post = new Products();
-            $post->image = $request->picture;
-            $post->name = $request->name;
-            $post->buy = $request->purchase;
-            $post->sell = $request->selling;
-            $post->stoc = $request->stock;
-            $post->save();
 
-            return redirect()->route('product.index');
+            Products::insert($data);
+
+            return redirect()->route('product.index')->withSucces('success', 'Create data product Successfully');
         }
     }
 

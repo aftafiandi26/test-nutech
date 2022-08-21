@@ -5,6 +5,10 @@
 <link rel="stylesheet" href="{{ asset('assets/sweetalert2/sweetalert2.css') }}">
 <script src="{{ asset('assets/sweetalert2/sweetalert2.js') }}"></script>
 
+<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+
 <div class="container">
     <div class="row">
         <h2 class="page-header text-center">Table Product</h2>
@@ -29,10 +33,9 @@
 <div class="container mb-3">
     <div class="row">
         <div class="col">
-            <form action="#" method="get" enctype="application/x-www-form-urlencoded">
-                @csrf
-                <label for="find">Product Name</label>
-                <input type="text" name="find" id="find" class="form-controll">
+            <form action="/product" method="get">
+                <label for="keyword">Product Name</label>
+                <input type="text" name="keyword" id="keyword" class="form-controll">
                 <button type="submit" class="badge bg-secondary">find</button>
             </form>
         </div>

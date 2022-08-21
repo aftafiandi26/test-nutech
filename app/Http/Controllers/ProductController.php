@@ -18,7 +18,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Products::orderBy('id', 'asc')->paginate(10);
+        $products = Products::filter(request(['keyword']))->orderBy('id', 'asc')->paginate(10)->withQueryString();
 
         return view('products.index', compact('products'));
     }
@@ -157,7 +157,7 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-        //
+        dd($id);
     }
 
     /**

@@ -14,6 +14,13 @@ class Products extends Model
     protected $guarded = [];
     protected $primaryKey = 'id';
 
+    public function scopeFilter($query, array $filter)
+    {
+        $query->when($filter['keyword'] ?? false, function ($query, $search) {
+            return $query->where('name', 'like', '%' . $search . '%');
+        });
+    }
+
     public function getCover()
     {
         if (substr($this->image, 0, 5) == 'https') {
